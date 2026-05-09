@@ -1,0 +1,32 @@
+# Render Configuration
+# Save as render.yaml in root directory
+
+services:
+  - type: web
+    name: mad-backend
+    plan: free
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DB_HOST
+        value: your_mysql_host
+      - key: DB_USER
+        value: your_mysql_user
+      - key: DB_PASSWORD
+        value: your_mysql_password
+        isSecret: true
+      - key: DB_NAME
+        value: mad_project_db
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        value: your_jwt_secret_key_here_make_it_long_and_strong
+        isSecret: true
+      - key: CORS_ORIGIN
+        value: '*'
+    healthCheckPath: /api/health
+    healthCheckTimeout: 30
+    healthCheckInterval: 30
