@@ -14,6 +14,8 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // Log request for debugging
+    console.log('API Request:', config.method.toUpperCase(), config.url);
     return config;
   },
   (error) => Promise.reject(error)
@@ -21,8 +23,19 @@ apiClient.interceptors.request.use(
 
 // Handle responses
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('API Response Success:', response.status, response.config.url);
+    return response;
+  },
   (error) => {
+    // Log errors for debugging
+    console.log('API Error:', {
+      status: error.response?.status,
+      url: error.config?.url,
+      message: error.message,
+      data: error.response?.data
+    });
+    
     if (error.response?.status === 401) {
       AsyncStorage.removeItem('userToken');
       AsyncStorage.removeItem('userData');

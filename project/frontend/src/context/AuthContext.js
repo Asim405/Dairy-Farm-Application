@@ -52,11 +52,16 @@ export const AuthProvider = ({ children }) => {
         return data;
       },
       continueAsGuest: async () => {
-        const { data } = await apiClient.post('/auth/guest');
-        await AsyncStorage.setItem('userToken', data.token);
-        await AsyncStorage.setItem('userData', JSON.stringify(data.user));
-        dispatch({ type: 'SIGN_IN', token: data.token, user: data.user });
-        return data;
+        try {
+          const { data } = await apiClient.post('/auth/guest');
+          await AsyncStorage.setItem('userToken', data.token);
+          await AsyncStorage.setItem('userData', JSON.stringify(data.user));
+          dispatch({ type: 'SIGN_IN', token: data.token, user: data.user });
+          return data;
+        } catch (error) {
+          console.error('Guest session error:', error);
+          throw error;
+        }
       },
       signOut: async () => {
         await AsyncStorage.removeItem('userToken');

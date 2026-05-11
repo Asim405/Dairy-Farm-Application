@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
 import { AuthContext } from '../context/AuthContext';
+
+const { width } = Dimensions.get('window');
+const TILE_WIDTH = (width - 44) / 2; // Adjusted for padding and gap
 
 export const HomeScreen = ({ navigation }) => {
   const { state } = React.useContext(AuthContext);
@@ -45,13 +48,14 @@ export const HomeScreen = ({ navigation }) => {
     { title: 'Production & Sales', icon: 'local-drink', color: '#2F8C83', screen: 'ProductionSales' },
     { title: 'Finance & Operations', icon: 'attach-money', color: '#E07A16', screen: 'FinanceOperations' },
     { title: 'Staff Management', icon: 'people', color: '#6A4A3C', screen: 'StaffManagement' },
-    { title: 'Inventory Management', icon: 'inventory-2', color: '#2C4D5F', screen: 'InventoryManagement' },
+    // FIXED: changed 'inventory-2' to 'inventory'
+    { title: 'Inventory Management', icon: 'inventory', color: '#2C4D5F', screen: 'InventoryManagement' },
     { title: 'Crops Detail', icon: 'grass', color: '#4FA765', screen: 'CropsDetail' },
     { title: 'AI Health Detection', icon: 'insights', color: '#C8A15A', comingSoon: true },
   ];
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.topBar}>
         <View>
           <Text style={styles.welcomeSmall}>Welcome back,</Text>
@@ -77,6 +81,7 @@ export const HomeScreen = ({ navigation }) => {
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
       <Text style={styles.sectionTitle}>Farm Management</Text>
+      
       <View style={styles.grid}>
         {tiles.map((t) => (
           <TouchableOpacity
@@ -93,7 +98,9 @@ export const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+      {/* Extra padding at bottom for scrollability */}
+      <View style={{ height: 30 }} />
+    </ScrollView>
   );
 };
 
@@ -105,7 +112,7 @@ const styles = StyleSheet.create({
   topBar: {
     backgroundColor: '#4FA765',
     paddingHorizontal: 16,
-    paddingTop: 18,
+    paddingTop: 40, // Increased for status bar
     paddingBottom: 14,
     flexDirection: 'row',
     alignItems: 'center',
@@ -133,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#77B67F',
     margin: 16,
     borderRadius: 14,
-    padding: 16,
+    padding: 20,
   },
   heroTitle: {
     color: 'rgba(255,255,255,0.95)',
@@ -141,7 +148,7 @@ const styles = StyleSheet.create({
   },
   heroValue: {
     color: '#fff',
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '900',
     marginTop: 4,
   },
@@ -153,50 +160,64 @@ const styles = StyleSheet.create({
   sectionTitle: {
     marginHorizontal: 16,
     marginTop: 4,
-    marginBottom: 10,
+    marginBottom: 12,
     fontWeight: '800',
     color: '#101828',
+    fontSize: 16,
   },
   grid: {
     paddingHorizontal: 16,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    justifyContent: 'space-between',
   },
   tile: {
-    width: '48%',
+    width: TILE_WIDTH,
     backgroundColor: '#fff',
     borderRadius: 14,
     borderWidth: 1,
     borderColor: '#EAECF0',
     padding: 12,
-    minHeight: 86,
+    marginBottom: 12,
+    minHeight: 100,
+    elevation: 2, // Shadow for Android
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   tileDisabled: {
-    opacity: 0.7,
+    opacity: 0.6,
+    backgroundColor: '#F9FAFB',
   },
   tileIcon: {
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   tileText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: '#344054',
+    lineHeight: 18,
   },
   comingSoon: {
-    marginTop: 6,
-    fontSize: 11,
+    marginTop: 4,
+    fontSize: 10,
     color: '#B54708',
     fontWeight: '700',
+    textTransform: 'uppercase',
   },
   error: {
     marginHorizontal: 16,
     color: '#B42318',
-    marginTop: 8,
+    marginBottom: 12,
+    backgroundColor: '#FEF3F2',
+    padding: 8,
+    borderRadius: 6,
+    fontSize: 12,
   },
 });
