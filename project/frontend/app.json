@@ -11,18 +11,17 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTabletMode": true
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.madproject.app"
+      "package": "com.asimsultan.madproject",
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,6 +34,11 @@
           "cameraPermission": "The app uses the camera to take photos of items"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "595b6064-af78-4152-911b-465ec1529aea"
+      }
+    }
   }
 }
