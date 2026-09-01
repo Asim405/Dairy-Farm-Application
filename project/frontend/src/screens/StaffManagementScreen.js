@@ -52,7 +52,7 @@ export const StaffManagementScreen = ({ navigation }) => {
               <View style={{ flex: 1 }}>
                 <Text style={styles.name}>{item.full_name}</Text>
                 <Text style={styles.role}>{item.role_position}</Text>
-                <Text style={styles.meta}>Monthly Salary: ₹{item.monthly_salary || 0}</Text>
+                <Text style={styles.meta}>Monthly Salary: Rs.{item.monthly_salary || 0}</Text>
               </View>
               <Text style={styles.shift}>{item.shift}</Text>
             </View>

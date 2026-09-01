@@ -15,7 +15,7 @@ services:
         value: your_mysql_user
       - key: DB_PASSWORD
         value: your_mysql_password
-        isSecret: true
+        isSecra: true
       - key: DB_NAME
         value: mad_project_db
       - key: PORT

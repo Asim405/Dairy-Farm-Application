@@ -86,7 +86,7 @@ You need to create your tables inside your new cloud database.
 4. Copy the entire contents of your local database schema file:
    👉 `project/backend/queries/schema.sql`
 5. Paste it into your database client's SQL Editor and **Execute All**.
-6. (Optional) Run the seed script to populate demo data:
+6. (Optional) Run the seed script to populate demo data: 
    👉 `project/backend/queries/seed.sql`
 
 Your cloud database is now fully set up and ready! 🎉
@@ -144,9 +144,40 @@ Now that your backend is live on the internet, let's point your mobile app to it
    git commit -m "Update API URL to production Render endpoint"
    git push origin main
    ```
-5. **Re-build your Android APK**! 
-   * Now that your APK points to a public HTTPS cloud URL, it will connect instantly from **any phone, anywhere, on any internet connection (Wi-Fi or cellular data)**!
-   * There are no firewall settings to worry about on your local PC anymore!
+5. **Re-build your Android APK using EAS Build**!
+   
+   To build your standalone APK file using Expo's cloud build servers (EAS Build), follow these steps in your terminal:
+   
+   * **Open a terminal in the frontend directory:**
+     ```bash
+     cd project/frontend
+     ```
+   
+   * **Install the EAS CLI globally (if you haven't already):**
+     ```bash
+     npm install -g eas-cli
+     ```
+   
+   * **Log in to your Expo account:**
+     ```bash
+     eas login
+     ```
+     *(Enter your Expo username/email and password)*
+   
+   * **Start the Cloud APK Build:**
+     ```bash
+     eas build --platform android --profile preview
+     ```
+     * **Why `--profile preview`?** Because your `eas.json` is configured to build a downloadable `.apk` file for the `preview` profile, instead of a Google Play Store bundle (`.aab`).
+     * Once the build starts, EAS will queue your build, compile the app in the cloud, and provide you with a **direct download URL** or a **QR Code** on your terminal to download and install the APK on your phone!
+     
+   * **(Alternative) Local Offline Build:**
+     If you have Android Studio and the Android SDK installed on your own PC and want to compile the APK offline locally (instead of using Expo's cloud servers):
+     ```bash
+     eas build --platform android --profile preview --local
+     ```
+
+   Now that your APK points to a public HTTPS cloud URL, it will connect instantly from **any phone, anywhere, on any internet connection (Wi-Fi or cellular data)**! There are no firewall settings to worry about on your local PC anymore!
 
 *Note: Render's Free Tier web services automatically go to "sleep" after 15 minutes of inactivity. When you open your app for the first time in a while, logging in might take **30-40 seconds** because the server is spinning back up. Once it is awake, all subsequent requests will respond instantly (under 1 second).*
 

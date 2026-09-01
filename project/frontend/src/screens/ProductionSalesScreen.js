@@ -88,7 +88,7 @@ export const ProductionSalesScreen = ({ navigation }) => {
             </View>
             <View style={styles.kpiCard}>
               <Text style={styles.kpiLabel}>Revenue</Text>
-              <Text style={styles.kpiValue}>₹{overview.revenueToday}</Text>
+              <Text style={styles.kpiValue}>Rs.{overview.revenueToday}</Text>
               <Text style={styles.kpiTiny}>Today</Text>
             </View>
           </View>
@@ -141,9 +141,9 @@ export const ProductionSalesScreen = ({ navigation }) => {
               <View style={styles.listRow}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.rowTitle}>{item.buyer_name}</Text>
-                  <Text style={styles.rowSub}>{String(item.sale_date).slice(0, 10)} • {item.liters_sold}L • ₹{item.price_per_liter}/L</Text>
+                  <Text style={styles.rowSub}>{String(item.sale_date).slice(0, 10)} • {item.liters_sold}L • Rs.{item.price_per_liter}/L</Text>
                 </View>
-                <Text style={[styles.rowRight, { color: '#4FA765' }]}>₹{item.total_amount}</Text>
+                <Text style={[styles.rowRight, { color: '#4FA765' }]}>Rs.{item.total_amount}</Text>
               </View>
             )}
           />

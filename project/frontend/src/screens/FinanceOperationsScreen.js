@@ -50,9 +50,9 @@ export const FinanceOperationsScreen = ({ navigation }) => {
         </View>
       ) : tab === 'Overview' ? (
         <View style={{ padding: 16, gap: 12 }}>
-          <Kpi title="Total Revenue" value={`₹${overview.revenueMonth}`} tint="#E9F5EE" />
-          <Kpi title="Total Expense" value={`₹${overview.expenseMonth}`} tint="#FEE4E2" />
-          <Kpi title="Net Profit/Loss" value={`₹${overview.netMonth}`} tint="#E9F5EE" />
+          <Kpi title="Total Revenue" value={`Rs.${overview.revenueMonth}`} tint="#E9F5EE" />
+          <Kpi title="Total Expense" value={`Rs.${overview.expenseMonth}`} tint="#FEE4E2" />
+          <Kpi title="Net Profit/Loss" value={`Rs.${overview.netMonth}`} tint="#E9F5EE" />
         </View>
       ) : tab === 'Expenses' ? (
         <FlatList
@@ -68,7 +68,7 @@ export const FinanceOperationsScreen = ({ navigation }) => {
                   <Text style={styles.rowSub}>{String(item.expense_date).slice(0, 10)} • {item.description || ''}</Text>
                 </View>
               </View>
-              <Text style={styles.rowAmount}>₹{item.amount}</Text>
+              <Text style={styles.rowAmount}>Rs.{item.amount}</Text>
             </View>
           )}
         />

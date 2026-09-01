@@ -74,7 +74,7 @@ export const ProfileScreen = ({ navigation }) => {
             <View style={styles.statsGrid}>
               <StatCard value={stats.totalAnimals} label="Total Animals" tint="#E9F5EE" />
               <StatCard value={`${stats.litersToday}L`} label="Daily Production" tint="#EAF3FF" />
-              <StatCard value={`₹${stats.revenueWeek}`} label="Weekly Revenue" tint="#E9F5EE" />
+              <StatCard value={`Rs.${stats.revenueWeek}`} label="Weekly Revenue" tint="#E9F5EE" />
               <StatCard value={stats.staffMembers} label="Staff Members" tint="#F2F2F2" />
             </View>
           </View>
