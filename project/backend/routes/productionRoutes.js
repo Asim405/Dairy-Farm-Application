@@ -157,5 +157,97 @@ router.get('/compare', authenticateToken, async (req, res) => {
   }
 });
 
+// 7-day milk production trend for charts
+router.get('/trend', authenticateToken, async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      `SELECT DATE_FORMAT(entry_date, '%Y-%m-%d') AS date,
+              DATE_FORMAT(entry_date, '%a') AS day_name,
+              COALESCE(SUM(morning_liters + evening_liters), 0) AS total_liters,
+              COALESCE(SUM(morning_liters), 0) AS morning_liters,
+              COALESCE(SUM(evening_liters), 0) AS evening_liters
+       FROM production_entries
+       WHERE entry_date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+       GROUP BY entry_date
+       ORDER BY entry_date ASC`
+    );
+    connection.release();
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update production entry
+router.put('/entries/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { morningLiters, eveningLiters, entryDate } = req.body;
+    const connection = await pool.getConnection();
+    await connection.query(
+      `UPDATE production_entries
+       SET morning_liters=?, evening_liters=?, entry_date=COALESCE(?, entry_date)
+       WHERE id=?`,
+      [Number(morningLiters || 0), Number(eveningLiters || 0), entryDate || null, id]
+    );
+    const [rows] = await connection.query('SELECT * FROM production_entries WHERE id = ? LIMIT 1', [id]);
+    connection.release();
+    if (!rows.length) return res.status(404).json({ error: 'Entry not found' });
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete production entry
+router.delete('/entries/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const connection = await pool.getConnection();
+    const [result] = await connection.query('DELETE FROM production_entries WHERE id = ?', [id]);
+    connection.release();
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Entry not found' });
+    res.json({ message: 'Deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update sale
+router.put('/sales/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { saleDate, buyerName, litersSold, pricePerLiter } = req.body;
+    const connection = await pool.getConnection();
+    await connection.query(
+      `UPDATE sales
+       SET sale_date=COALESCE(?, sale_date), buyer_name=?, liters_sold=?, price_per_liter=?
+       WHERE id=?`,
+      [saleDate || null, buyerName, Number(litersSold || 0), Number(pricePerLiter || 0), id]
+    );
+    const [rows] = await connection.query('SELECT * FROM sales WHERE id = ? LIMIT 1', [id]);
+    connection.release();
+    if (!rows.length) return res.status(404).json({ error: 'Sale not found' });
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete sale
+router.delete('/sales/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const connection = await pool.getConnection();
+    const [result] = await connection.query('DELETE FROM sales WHERE id = ?', [id]);
+    connection.release();
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Sale not found' });
+    res.json({ message: 'Deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
 

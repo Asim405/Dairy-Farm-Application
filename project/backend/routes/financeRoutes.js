@@ -94,5 +94,57 @@ router.get('/pl', authenticateToken, async (req, res) => {
   }
 });
 
+// Update expense
+router.put('/expenses/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { expenseDate, category, amount, description } = req.body;
+    const connection = await pool.getConnection();
+    await connection.query(
+      `UPDATE expenses
+       SET expense_date=COALESCE(?, expense_date), category=?, amount=?, description=?
+       WHERE id=?`,
+      [expenseDate || null, category || 'Other', Number(amount || 0), description || null, id]
+    );
+    const [rows] = await connection.query('SELECT * FROM expenses WHERE id=? LIMIT 1', [id]);
+    connection.release();
+    if (!rows.length) return res.status(404).json({ error: 'Expense not found' });
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete expense
+router.delete('/expenses/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const connection = await pool.getConnection();
+    const [result] = await connection.query('DELETE FROM expenses WHERE id = ?', [id]);
+    connection.release();
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Expense not found' });
+    res.json({ message: 'Deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Expense category breakdown (for pie/donut charts)
+router.get('/breakdown', authenticateToken, async (req, res) => {
+  try {
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query(
+      `SELECT category, COALESCE(SUM(amount), 0) AS total_amount, COUNT(*) AS count
+       FROM expenses
+       GROUP BY category
+       ORDER BY total_amount DESC`
+    );
+    connection.release();
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
 
