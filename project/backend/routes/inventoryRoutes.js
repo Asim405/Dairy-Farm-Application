@@ -49,5 +49,59 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
+router.put('/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { itemName, category, quantity, unit, minStockLevel } = req.body;
+    const connection = await pool.getConnection();
+    await connection.query(
+      `UPDATE inventory_items
+       SET item_name=?, category=?, quantity=?, unit=?, min_stock_level=?, last_updated=CURDATE()
+       WHERE id=?`,
+      [itemName, category || 'Other', Number(quantity || 0), unit || 'units', Number(minStockLevel || 0), id]
+    );
+    const [rows] = await connection.query('SELECT * FROM inventory_items WHERE id=? LIMIT 1', [id]);
+    connection.release();
+    if (!rows.length) return res.status(404).json({ error: 'Item not found' });
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Quick stock adjustment (+delta or -delta)
+router.patch('/:id/adjust', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { delta } = req.body; // e.g. +5 or -2
+    const connection = await pool.getConnection();
+    await connection.query(
+      `UPDATE inventory_items
+       SET quantity = GREATEST(0, quantity + ?), last_updated = CURDATE()
+       WHERE id = ?`,
+      [Number(delta || 0), id]
+    );
+    const [rows] = await connection.query('SELECT * FROM inventory_items WHERE id=? LIMIT 1', [id]);
+    connection.release();
+    if (!rows.length) return res.status(404).json({ error: 'Item not found' });
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const connection = await pool.getConnection();
+    const [result] = await connection.query('DELETE FROM inventory_items WHERE id = ?', [id]);
+    connection.release();
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'Item not found' });
+    res.json({ message: 'Deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
 
