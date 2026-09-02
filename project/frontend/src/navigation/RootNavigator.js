@@ -8,7 +8,7 @@ import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { SearchScreen } from '../screens/SearchScreen';
-import { ReportsScreen } from '../screens/ProductionSalesScreen';
+import { ReportsScreen } from '../screens/ReportsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { LiveStockScreen } from '../screens/LiveStockScreen';
