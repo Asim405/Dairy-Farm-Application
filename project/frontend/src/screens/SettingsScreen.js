@@ -23,6 +23,7 @@ export const SettingsScreen = ({ navigation }) => {
     dark_mode: false,
     language: 'English',
   });
+  const isDarkMode = !!settings.dark_mode;
 
   // Modals
   const [showPasswordModal, setShowPasswordModal] = React.useState(false);
@@ -87,7 +88,7 @@ export const SettingsScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && styles.containerDark]}>
       {/* Top Header */}
       <View style={styles.topBar}>
         <Text style={styles.topTitle}>Settings & Preferences</Text>
@@ -100,10 +101,11 @@ export const SettingsScreen = ({ navigation }) => {
       ) : (
         <ScrollView contentContainerStyle={{ paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
           {/* Preferences Section */}
-          <Section title="Preferences">
+          <Section title="Preferences" isDarkMode={isDarkMode}>
             <Row
               icon="notifications"
               label="Push Notifications"
+              isDarkMode={isDarkMode}
               right={
                 <Switch
                   value={!!settings.notifications_enabled}
@@ -115,6 +117,7 @@ export const SettingsScreen = ({ navigation }) => {
             <Row
               icon="dark-mode"
               label="Dark Theme (Preview)"
+              isDarkMode={isDarkMode}
               right={
                 <Switch
                   value={!!settings.dark_mode}
@@ -129,7 +132,9 @@ export const SettingsScreen = ({ navigation }) => {
                 label="Language"
                 right={
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                    <Text style={styles.rightText}>{settings.language || 'English'}</Text>
+                    <Text style={[styles.rightText, isDarkMode && styles.rightTextDark]}>
+                      {settings.language || 'English'}
+                    </Text>
                     <MaterialIcons name="chevron-right" size={20} color="#98A2B3" />
                   </View>
                 }
@@ -138,7 +143,7 @@ export const SettingsScreen = ({ navigation }) => {
           </Section>
 
           {/* Security Section */}
-          <Section title="Security & Access">
+          <Section title="Security & Access" isDarkMode={isDarkMode}>
             <TouchableOpacity onPress={() => setShowPasswordModal(true)}>
               <Row
                 icon="lock"
@@ -156,7 +161,7 @@ export const SettingsScreen = ({ navigation }) => {
           </Section>
 
           {/* Support Section */}
-          <Section title="Help & Support">
+          <Section title="Help & Support" isDarkMode={isDarkMode}>
             <TouchableOpacity onPress={() => setShowHelpModal(true)}>
               <Row
                 icon="help-outline"
@@ -193,7 +198,7 @@ export const SettingsScreen = ({ navigation }) => {
         onRequestClose={() => setShowPasswordModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, isDarkMode && styles.modalCardDark]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Change Password</Text>
               <TouchableOpacity onPress={() => setShowPasswordModal(false)}>
@@ -204,7 +209,7 @@ export const SettingsScreen = ({ navigation }) => {
             <View style={{ padding: 16 }}>
               <Text style={styles.inputLabel}>Current Password</Text>
               <TextInput
-                style={styles.modalInput}
+                style={[styles.modalInput, isDarkMode && styles.modalInputDark]}
                 secureTextEntry
                 placeholder="••••••••"
                 value={passwordForm.currentPassword}
@@ -213,7 +218,7 @@ export const SettingsScreen = ({ navigation }) => {
 
               <Text style={styles.inputLabel}>New Password</Text>
               <TextInput
-                style={styles.modalInput}
+                style={[styles.modalInput, isDarkMode && styles.modalInputDark]}
                 secureTextEntry
                 placeholder="At least 6 characters"
                 value={passwordForm.newPassword}
@@ -222,7 +227,7 @@ export const SettingsScreen = ({ navigation }) => {
 
               <Text style={styles.inputLabel}>Confirm New Password</Text>
               <TextInput
-                style={styles.modalInput}
+                style={[styles.modalInput, isDarkMode && styles.modalInputDark]}
                 secureTextEntry
                 placeholder="Repeat new password"
                 value={passwordForm.confirmPassword}
@@ -245,7 +250,7 @@ export const SettingsScreen = ({ navigation }) => {
         onRequestClose={() => setShowLanguageModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, isDarkMode && styles.modalCardDark]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Language</Text>
               <TouchableOpacity onPress={() => setShowLanguageModal(false)}>
@@ -259,13 +264,23 @@ export const SettingsScreen = ({ navigation }) => {
                 return (
                   <TouchableOpacity
                     key={lang}
-                    style={[styles.langOption, isSelected && styles.langOptionActive]}
+                    style={[
+                      styles.langOption,
+                      isSelected && styles.langOptionActive,
+                      isDarkMode && styles.langOptionDark,
+                    ]}
                     onPress={() => {
                       update({ language: lang.split(' ')[0] });
                       setShowLanguageModal(false);
                     }}
                   >
-                    <Text style={[styles.langOptionText, isSelected && styles.langOptionTextActive]}>
+                    <Text
+                      style={[
+                        styles.langOptionText,
+                        isSelected && styles.langOptionTextActive,
+                        isDarkMode && styles.langOptionTextDark,
+                      ]}
+                    >
                       {lang}
                     </Text>
                     {isSelected && <MaterialIcons name="check" size={20} color="#4FA765" />}
@@ -285,7 +300,7 @@ export const SettingsScreen = ({ navigation }) => {
         onRequestClose={() => setShowAboutModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, isDarkMode && styles.modalCardDark]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>About Dairy Farm Manager</Text>
               <TouchableOpacity onPress={() => setShowAboutModal(false)}>
@@ -321,7 +336,7 @@ export const SettingsScreen = ({ navigation }) => {
         onRequestClose={() => setShowHelpModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, isDarkMode && styles.modalCardDark]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Help & Quick FAQ</Text>
               <TouchableOpacity onPress={() => setShowHelpModal(false)}>
@@ -330,10 +345,10 @@ export const SettingsScreen = ({ navigation }) => {
             </View>
 
             <ScrollView style={{ padding: 16, maxHeight: 380 }}>
-              <FaqItem q="How do I add an animal?" a="Open Live Stock from Home, then tap the green '+' button to enter animal details and generate a QR tag." />
-              <FaqItem q="How do I log daily milk yield?" a="Go to Production & Sales -> Daily Entry -> tap 'Add Entry' and select the animal." />
-              <FaqItem q="How to adjust inventory stock?" a="In Inventory Management, use the '+/-' quick adjust buttons on any item." />
-              <FaqItem q="How to edit or delete records?" a="Tap any item card to open its detail sheet and choose 'Edit' or 'Delete'." />
+              <FaqItem q="How do I add an animal?" a="Open Live Stock from Home, then tap the green '+' button to enter animal details and generate a QR tag." isDarkMode={isDarkMode} />
+              <FaqItem q="How do I log daily milk yield?" a="Go to Production & Sales -> Daily Entry -> tap 'Add Entry' and select the animal." isDarkMode={isDarkMode} />
+              <FaqItem q="How to adjust inventory stock?" a="In Inventory Management, use the '+/-' quick adjust buttons on any item." isDarkMode={isDarkMode} />
+              <FaqItem q="How to edit or delete records?" a="Tap any item card to open its detail sheet and choose 'Edit' or 'Delete'." isDarkMode={isDarkMode} />
 
               <TouchableOpacity
                 style={[styles.modalSaveBtn, { marginTop: 10 }]}
@@ -354,7 +369,7 @@ export const SettingsScreen = ({ navigation }) => {
         onRequestClose={() => setShowPrivacyModal(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, isDarkMode && styles.modalCardDark]}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Privacy Policy</Text>
               <TouchableOpacity onPress={() => setShowPrivacyModal(false)}>
@@ -381,32 +396,33 @@ export const SettingsScreen = ({ navigation }) => {
   );
 };
 
-const Section = ({ title, children }) => (
+const Section = ({ title, children, isDarkMode }) => (
   <View style={styles.section}>
-    <Text style={styles.sectionTitle}>{title}</Text>
-    <View style={styles.sectionCard}>{children}</View>
+    <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>{title}</Text>
+    <View style={[styles.sectionCard, isDarkMode && styles.sectionCardDark]}>{children}</View>
   </View>
 );
 
-const Row = ({ icon, label, right }) => (
-  <View style={styles.row}>
+const Row = ({ icon, label, right, isDarkMode }) => (
+  <View style={[styles.row, isDarkMode && styles.rowDark]}>
     <View style={styles.rowLeft}>
-      <MaterialIcons name={icon} size={20} color="#667085" />
-      <Text style={styles.rowLabel}>{label}</Text>
+      <MaterialIcons name={icon} size={20} color={isDarkMode ? '#D0D5DD' : '#667085'} />
+      <Text style={[styles.rowLabel, isDarkMode && styles.rowLabelDark]}>{label}</Text>
     </View>
     {right}
   </View>
 );
 
-const FaqItem = ({ q, a }) => (
-  <View style={styles.faqItem}>
-    <Text style={styles.faqQ}>{q}</Text>
-    <Text style={styles.faqA}>{a}</Text>
+const FaqItem = ({ q, a, isDarkMode }) => (
+  <View style={[styles.faqItem, isDarkMode && styles.faqItemDark]}>
+    <Text style={[styles.faqQ, isDarkMode && styles.faqQDark]}>{q}</Text>
+    <Text style={[styles.faqA, isDarkMode && styles.faqADark]}>{a}</Text>
   </View>
 );
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FAFAFB' },
+  containerDark: { backgroundColor: '#121826' },
   topBar: {
     backgroundColor: '#344054',
     paddingTop: 42,
@@ -417,12 +433,17 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   section: { paddingHorizontal: 16, paddingTop: 16 },
   sectionTitle: { fontWeight: '900', color: '#101828', marginBottom: 8, fontSize: 13 },
+  sectionTitleDark: { color: '#E4E7EC' },
   sectionCard: {
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#EAECF0',
     borderRadius: 14,
     overflow: 'hidden',
+  },
+  sectionCardDark: {
+    backgroundColor: '#1D2433',
+    borderColor: '#374151',
   },
   row: {
     flexDirection: 'row',
@@ -433,9 +454,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F2F4F7',
   },
+  rowDark: { borderTopColor: '#374151' },
   rowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   rowLabel: { fontWeight: '700', color: '#344054', fontSize: 14 },
+  rowLabelDark: { color: '#E4E7EC' },
   rightText: { color: '#667085', fontWeight: '700', fontSize: 13 },
+  rightTextDark: { color: '#D0D5DD' },
   logout: {
     margin: 16,
     marginTop: 20,
@@ -459,6 +483,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalCard: { width: '100%', maxWidth: 360, backgroundColor: '#fff', borderRadius: 20, overflow: 'hidden' },
+  modalCardDark: { backgroundColor: '#1D2433' },
   modalHeader: {
     backgroundColor: '#344054',
     padding: 14,
@@ -477,6 +502,11 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
     fontSize: 13,
     color: '#101828',
+  },
+  modalInputDark: {
+    backgroundColor: '#0F172A',
+    borderColor: '#475467',
+    color: '#F2F4F7',
   },
   modalSaveBtn: {
     backgroundColor: '#4FA765',
@@ -497,10 +527,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#EAECF0',
   },
+  langOptionDark: {
+    backgroundColor: '#0F172A',
+    borderColor: '#475467',
+  },
   langOptionActive: { borderColor: '#4FA765', backgroundColor: '#E9F5EE' },
   langOptionText: { fontSize: 14, fontWeight: '700', color: '#344054' },
+  langOptionTextDark: { color: '#E4E7EC' },
   langOptionTextActive: { color: '#4FA765', fontWeight: '900' },
   faqItem: { marginBottom: 12, backgroundColor: '#F9FAFB', padding: 12, borderRadius: 10 },
+  faqItemDark: { backgroundColor: '#0F172A' },
   faqQ: { fontWeight: '900', color: '#101828', fontSize: 13, marginBottom: 4 },
+  faqQDark: { color: '#F2F4F7' },
   faqA: { color: '#667085', fontSize: 12, lineHeight: 18 },
+  faqADark: { color: '#D0D5DD' },
 });
