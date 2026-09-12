@@ -16,14 +16,8 @@ import apiClient from '../services/apiClient';
 import { AuthContext } from '../context/AuthContext';
 
 export const SettingsScreen = ({ navigation }) => {
-  const { signOut } = React.useContext(AuthContext);
+  const { signOut, settings, updateSettings, isDarkMode, refreshSettings } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(true);
-  const [settings, setSettings] = React.useState({
-    notifications_enabled: true,
-    dark_mode: false,
-    language: 'English',
-  });
-  const isDarkMode = !!settings.dark_mode;
 
   // Modals
   const [showPasswordModal, setShowPasswordModal] = React.useState(false);
@@ -38,34 +32,23 @@ export const SettingsScreen = ({ navigation }) => {
   const [showPrivacyModal, setShowPrivacyModal] = React.useState(false);
   const [showHelpModal, setShowHelpModal] = React.useState(false);
 
-  const load = React.useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data } = await apiClient.get('/settings');
-      setSettings(data || { notifications_enabled: true, dark_mode: false, language: 'English' });
-    } catch (e) {
-      console.log('Error loading settings', e);
-    } finally {
+  React.useEffect(() => {
+    const unsub = navigation.addListener('focus', async () => {
+      setLoading(true);
+      await refreshSettings();
       setLoading(false);
-    }
-  }, []);
+    });
+    return unsub;
+  }, [navigation, refreshSettings]);
 
   React.useEffect(() => {
-    const unsub = navigation.addListener('focus', load);
-    return unsub;
-  }, [navigation, load]);
+    if (settings) {
+      setLoading(false);
+    }
+  }, [settings]);
 
   const update = async (patch) => {
-    setSettings((s) => ({ ...s, ...patch }));
-    try {
-      await apiClient.put('/settings', {
-        notificationsEnabled: patch.notifications_enabled !== undefined ? patch.notifications_enabled : settings.notifications_enabled,
-        darkMode: patch.dark_mode !== undefined ? patch.dark_mode : settings.dark_mode,
-        language: patch.language !== undefined ? patch.language : settings.language,
-      });
-    } catch {
-      // optimistic update
-    }
+    await updateSettings(patch);
   };
 
   const handleChangePassword = () => {

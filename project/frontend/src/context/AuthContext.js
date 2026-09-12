@@ -1,8 +1,14 @@
-import React, { createContext, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from '../services/apiClient';
 
 export const AuthContext = createContext(null);
+
+const DEFAULT_SETTINGS = {
+  notifications_enabled: true,
+  dark_mode: false,
+  language: 'English',
+};
 
 const initialState = {
   userToken: null,
@@ -25,6 +31,7 @@ function reducer(state, action) {
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [isLoading, setIsLoading] = useState(true);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
   useEffect(() => {
     (async () => {
@@ -37,6 +44,43 @@ export const AuthProvider = ({ children }) => {
       }
     })();
   }, []);
+
+  const refreshSettings = useCallback(async () => {
+    if (!state.userToken) {
+      setSettings(DEFAULT_SETTINGS);
+      return;
+    }
+
+    try {
+      const { data } = await apiClient.get('/settings');
+      setSettings(data || DEFAULT_SETTINGS);
+    } catch (error) {
+      console.log('Error loading settings', error);
+      setSettings(DEFAULT_SETTINGS);
+    }
+  }, [state.userToken]);
+
+  useEffect(() => {
+    refreshSettings();
+  }, [refreshSettings]);
+
+  const updateSettings = useCallback(async (patch = {}) => {
+    const currentSettings = settings || DEFAULT_SETTINGS;
+    const nextSettings = { ...currentSettings, ...patch };
+
+    setSettings(nextSettings);
+
+    try {
+      await apiClient.put('/settings', {
+        notificationsEnabled: patch.notifications_enabled !== undefined ? patch.notifications_enabled : currentSettings.notifications_enabled,
+        darkMode: patch.dark_mode !== undefined ? patch.dark_mode : currentSettings.dark_mode,
+        language: patch.language !== undefined ? patch.language : currentSettings.language,
+      });
+    } catch (error) {
+      console.log('Error updating settings', error);
+      setSettings(currentSettings);
+    }
+  }, [settings]);
 
   const actions = useMemo(
     () => ({
@@ -66,6 +110,7 @@ export const AuthProvider = ({ children }) => {
       signOut: async () => {
         await AsyncStorage.removeItem('userToken');
         await AsyncStorage.removeItem('userData');
+        setSettings(DEFAULT_SETTINGS);
         dispatch({ type: 'SIGN_OUT' });
       },
     }),
@@ -73,7 +118,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   return (
-    <AuthContext.Provider value={{ state, isLoading, ...actions }}>
+    <AuthContext.Provider value={{ state, isLoading, settings, isDarkMode: !!settings.dark_mode, updateSettings, refreshSettings, ...actions }}>
       {children}
     </AuthContext.Provider>
   );
