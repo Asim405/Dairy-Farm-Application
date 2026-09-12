@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import { AuthContext } from '../context/AuthContext';
 import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { HomeScreen } from '../screens/HomeScreen';
@@ -37,7 +38,10 @@ export const AuthStack = () => (
   </Stack.Navigator>
 );
 
-const MainTabs = () => (
+const MainTabs = () => {
+  const { isDarkMode } = React.useContext(AuthContext);
+
+  return (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       headerShown: false,
@@ -52,8 +56,14 @@ const MainTabs = () => (
         return <MaterialIcons name={icons[route.name] || 'circle'} size={size} color={color} />;
       },
       tabBarActiveTintColor: '#4FA765',
-      tabBarInactiveTintColor: '#7B8794',
-      tabBarStyle: { height: 64, paddingBottom: 10, paddingTop: 8 },
+      tabBarInactiveTintColor: isDarkMode ? '#9AA6B2' : '#7B8794',
+      tabBarStyle: {
+        height: 64,
+        paddingBottom: 10,
+        paddingTop: 8,
+        backgroundColor: isDarkMode ? '#121826' : '#FFFFFF',
+        borderTopColor: isDarkMode ? '#374151' : '#E5E7EB',
+      },
       tabBarLabelStyle: { fontSize: 12 },
     })}
   >
@@ -69,7 +79,8 @@ const MainTabs = () => (
     <Tab.Screen name="Reports" component={ReportsScreen} />
     <Tab.Screen name="Settings" component={SettingsScreen} />
   </Tab.Navigator>
-);
+  );
+};
 
 export const AppStack = () => (
   <Stack.Navigator>

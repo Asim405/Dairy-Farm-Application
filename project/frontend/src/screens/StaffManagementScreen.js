@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 export const StaffManagementScreen = ({ navigation }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(true);
   const [staff, setStaff] = React.useState([]);
   const [selectedStaff, setSelectedStaff] = React.useState(null);
@@ -80,7 +82,7 @@ export const StaffManagementScreen = ({ navigation }) => {
   const totalPayroll = staff.reduce((acc, it) => acc + Number(it.monthly_salary || 0), 0);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

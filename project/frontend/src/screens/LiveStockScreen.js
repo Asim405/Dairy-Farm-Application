@@ -14,10 +14,12 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 const CATEGORIES = ['All', 'Cow', 'Buffalo', 'Sheep', 'Goat'];
 
 export const LiveStockScreen = ({ navigation }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const [category, setCategory] = React.useState('All');
   const [q, setQ] = React.useState('');
   const [loading, setLoading] = React.useState(true);
@@ -81,7 +83,7 @@ export const LiveStockScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

@@ -12,8 +12,10 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 export const CropsDetailScreen = ({ navigation }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(true);
   const [crops, setCrops] = React.useState([]);
   const [selectedCrop, setSelectedCrop] = React.useState(null);
@@ -87,7 +89,7 @@ export const CropsDetailScreen = ({ navigation }) => {
   const readySoonCount = crops.filter((c) => c.status === 'Ready Soon').length;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

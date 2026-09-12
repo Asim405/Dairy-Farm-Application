@@ -13,12 +13,14 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 import { BarChart, DonutChart } from '../components/Charts';
 
 const TABS = ['Overview', 'Expenses', 'P&L Analytics', 'Labor'];
 const EXPENSE_CATEGORIES = ['Feed', 'Labor', 'Medical Bills', 'Electricity', 'Other'];
 
 export const FinanceOperationsScreen = ({ navigation }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const [tab, setTab] = React.useState('Overview');
   const [loading, setLoading] = React.useState(true);
   const [overview, setOverview] = React.useState({ revenueMonth: 0, expenseMonth: 0, netMonth: 0 });
@@ -143,7 +145,7 @@ export const FinanceOperationsScreen = ({ navigation }) => {
   }, [plData]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

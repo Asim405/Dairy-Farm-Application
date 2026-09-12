@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 export const HealthManagementScreen = ({ navigation }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const [tab, setTab] = React.useState('Vaccinations');
   const [loading, setLoading] = React.useState(true);
   const [vaccinations, setVaccinations] = React.useState([]);
@@ -219,7 +221,7 @@ export const HealthManagementScreen = ({ navigation }) => {
   const activeList = tab === 'Vaccinations' ? vaccinations : checkups;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>
