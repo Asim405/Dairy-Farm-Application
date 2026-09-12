@@ -14,12 +14,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import QRCode from 'react-native-qrcode-svg';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 const CATEGORIES = ['Cow', 'Buffalo', 'Sheep', 'Goat', 'Other'];
 const GENDERS = ['Female', 'Male', 'Unknown'];
 const HEALTH_STATUSES = ['Healthy', 'Under Treatment', 'Sick'];
 
 export const AddAnimalScreen = ({ navigation, route }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const isEditing = Boolean(route.params?.animal);
   const existingAnimal = route.params?.animal;
 
@@ -88,7 +90,7 @@ export const AddAnimalScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

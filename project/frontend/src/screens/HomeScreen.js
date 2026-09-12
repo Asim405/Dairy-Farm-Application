@@ -17,7 +17,7 @@ const { width } = Dimensions.get('window');
 const TILE_WIDTH = (width - 44) / 2;
 
 export const HomeScreen = ({ navigation }) => {
-  const { state } = React.useContext(AuthContext);
+  const { state, isDarkMode } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
   const [error, setError] = React.useState('');
@@ -70,7 +70,7 @@ export const HomeScreen = ({ navigation }) => {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}
       showsVerticalScrollIndicator={false}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#4FA765']} />}
     >

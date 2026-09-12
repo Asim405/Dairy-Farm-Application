@@ -11,10 +11,12 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 const FILTER_TABS = ['All', 'Animals', 'Staff', 'Inventory', 'Crops', 'Sales'];
 
 export const SearchScreen = ({ navigation }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const [q, setQ] = React.useState('');
   const [activeFilter, setActiveFilter] = React.useState('All');
   const [loading, setLoading] = React.useState(false);
@@ -86,7 +88,7 @@ export const SearchScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <Text style={styles.topTitle}>Universal Farm Search</Text>

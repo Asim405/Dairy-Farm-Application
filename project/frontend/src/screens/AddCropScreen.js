@@ -11,11 +11,13 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 const UNITS = ['Acre', 'Marla', 'Kanal', 'Hectare'];
 const STATUSES = ['Growing', 'Ready Soon', 'Harvested'];
 
 export const AddCropScreen = ({ navigation, route }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const isEditing = Boolean(route.params?.crop);
   const existingCrop = route.params?.crop;
 
@@ -65,7 +67,7 @@ export const AddCropScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

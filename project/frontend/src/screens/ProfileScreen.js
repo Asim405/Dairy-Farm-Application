@@ -15,7 +15,7 @@ import { AuthContext } from '../context/AuthContext';
 import apiClient from '../services/apiClient';
 
 export const ProfileScreen = ({ navigation }) => {
-  const { state, signOut } = useContext(AuthContext);
+  const { state, signOut, isDarkMode } = useContext(AuthContext);
   const [loading, setLoading] = React.useState(true);
   const [profile, setProfile] = React.useState(null);
   const [stats, setStats] = React.useState({
@@ -105,7 +105,7 @@ export const ProfileScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

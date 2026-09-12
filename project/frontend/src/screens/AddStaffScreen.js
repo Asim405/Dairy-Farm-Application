@@ -12,11 +12,13 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 const ROLES = ['Milker', 'Feeder', 'Vet Assistant', 'General Farm Worker', 'Manager'];
 const SHIFTS = ['Morning', 'Evening', 'Morning & Evening', 'Night', 'Flexible'];
 
 export const AddStaffScreen = ({ navigation, route }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const isEditing = Boolean(route.params?.staff);
   const existingStaff = route.params?.staff;
 
@@ -81,7 +83,7 @@ export const AddStaffScreen = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

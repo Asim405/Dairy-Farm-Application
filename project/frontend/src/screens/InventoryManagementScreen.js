@@ -12,10 +12,12 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 
 const CATS = ['All', 'Fodder', 'Medicines', 'Equipment', 'Other'];
 
 export const InventoryManagementScreen = ({ navigation }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const [category, setCategory] = React.useState('All');
   const [loading, setLoading] = React.useState(true);
   const [items, setItems] = React.useState([]);
@@ -91,7 +93,7 @@ export const InventoryManagementScreen = ({ navigation }) => {
   const lowStockCount = items.filter((x) => x.low_stock).length;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.topLeft}>

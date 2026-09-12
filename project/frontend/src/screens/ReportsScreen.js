@@ -10,9 +10,11 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import apiClient from '../services/apiClient';
+import { AuthContext } from '../context/AuthContext';
 import { LineTrendChart, BarChart, DonutChart } from '../components/Charts';
 
 export const ReportsScreen = ({ navigation }) => {
+  const { isDarkMode } = React.useContext(AuthContext);
   const [loading, setLoading] = React.useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
   const [data, setData] = React.useState(null);
@@ -57,7 +59,7 @@ export const ReportsScreen = ({ navigation }) => {
   }, [data]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode && { backgroundColor: '#121826' }]}> 
       {/* Top Header */}
       <View style={styles.topBar}>
         <View style={styles.topLeft}>
