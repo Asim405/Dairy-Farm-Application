@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "MAD Project",
-    "slug": "mad-project",
+    "name": "Dairy Farm Management",
+    "slug": "dairy-farm-management",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/image.png",
