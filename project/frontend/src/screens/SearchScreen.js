@@ -139,7 +139,7 @@ export const SearchScreen = ({ navigation }) => {
         </View>
       ) : !q.trim() ? (
         <View style={styles.center}>
-          <MaterialIcons name="manage-search" size={56} color="#D0D5DD" />
+          <MaterialIcons name="search" size={56} color="#D0D5DD" />
           <Text style={styles.emptyTitle}>Live Farm Search</Text>
           <Text style={styles.emptySub}>
             Type any keyword to instantly look up animals, team members, feed stock, crops, or milk buyers

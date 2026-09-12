@@ -98,7 +98,7 @@ export const SettingsScreen = ({ navigation }) => {
               }
             />
             <Row
-              icon="dark-mode"
+              icon="brightness-4"
               label="Dark Theme (Preview)"
               isDarkMode={isDarkMode}
               right={
