@@ -29,6 +29,31 @@ export const AddAnimalScreen = ({ navigation, route }) => {
   const [qrVisible, setQrVisible] = React.useState(false);
   const [animalId, setAnimalId] = React.useState(existingAnimal?.id || null);
 
+  const uploadImageFile = React.useCallback(async (uri) => {
+    if (!uri || uri.startsWith('http')) {
+      return uri;
+    }
+
+    const fileName = uri.split('/').pop() || `animal-${Date.now()}.jpg`;
+    const extensionMatch = /\.([a-zA-Z0-9]+)$/.exec(fileName);
+    const fileType = extensionMatch ? `image/${extensionMatch[1]}` : 'image/jpeg';
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri,
+      name: fileName,
+      type: fileType,
+    });
+
+    const { data } = await apiClient.post('/uploads', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return data.url;
+  }, []);
+
   const [form, setForm] = React.useState({
     animalCode: existingAnimal?.animal_code || '',
     category: existingAnimal?.category || 'Cow',
@@ -44,10 +69,21 @@ export const AddAnimalScreen = ({ navigation, route }) => {
 
   const pickPhoto = async () => {
     const res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.8,
+      allowsEditing: true,
     });
-    if (!res.canceled) {
-      setForm((f) => ({ ...f, photoUrl: res.assets?.[0]?.uri || '' }));
+
+    if (res.canceled || !res.assets?.[0]?.uri) {
+      return;
+    }
+
+    try {
+      const uploadedUrl = await uploadImageFile(res.assets[0].uri);
+      setForm((f) => ({ ...f, photoUrl: uploadedUrl || '' }));
+      Alert.alert('Success', 'Animal photo uploaded successfully.');
+    } catch (err) {
+      Alert.alert('Upload failed', err?.response?.data?.error || 'Image could not be uploaded.');
     }
   };
 

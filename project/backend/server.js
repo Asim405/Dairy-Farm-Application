@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/uploads', require('./routes/uploadsRoutes'));
 app.use('/api/animals', require('./routes/animalsRoutes'));
 app.use('/api/health', require('./routes/healthRoutes'));
 app.use('/api/production', require('./routes/productionRoutes'));

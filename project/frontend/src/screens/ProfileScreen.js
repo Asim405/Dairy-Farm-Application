@@ -9,7 +9,9 @@ import {
   Modal,
   TextInput,
   Alert,
+  Image,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AuthContext } from '../context/AuthContext';
 import apiClient from '../services/apiClient';
@@ -28,13 +30,40 @@ export const ProfileScreen = ({ navigation }) => {
   // Edit Profile Modal
   const [showEditModal, setShowEditModal] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
+  const [uploadingImage, setUploadingImage] = React.useState(false);
   const [form, setForm] = React.useState({
     fullName: '',
     phoneNumber: '',
     farmName: '',
     farmLocation: '',
     totalLandAcres: '',
+    avatarUrl: '',
   });
+
+  const uploadImageFile = React.useCallback(async (uri) => {
+    if (!uri || uri.startsWith('http')) {
+      return uri;
+    }
+
+    const fileName = uri.split('/').pop() || `profile-${Date.now()}.jpg`;
+    const extensionMatch = /\.([a-zA-Z0-9]+)$/.exec(fileName);
+    const fileType = extensionMatch ? `image/${extensionMatch[1]}` : 'image/jpeg';
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri,
+      name: fileName,
+      type: fileType,
+    });
+
+    const { data } = await apiClient.post('/uploads', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return data.url;
+  }, []);
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -73,8 +102,39 @@ export const ProfileScreen = ({ navigation }) => {
       farmName: profile?.farmName || '',
       farmLocation: profile?.farmLocation || '',
       totalLandAcres: profile?.totalLandAcres != null ? String(profile.totalLandAcres) : '',
+      avatarUrl: profile?.avatarUrl || '',
     });
     setShowEditModal(true);
+  };
+
+  const pickProfileImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.status !== 'granted') {
+      Alert.alert('Permission denied', 'Please allow access to photos to update your profile image.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.8,
+      allowsEditing: true,
+    });
+
+    if (result.canceled || !result.assets?.[0]?.uri) {
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+      const uploadedUrl = await uploadImageFile(result.assets[0].uri);
+      setForm((prev) => ({ ...prev, avatarUrl: uploadedUrl }));
+      Alert.alert('Success', 'Profile photo uploaded successfully.');
+    } catch (err) {
+      Alert.alert('Upload failed', err?.response?.data?.error || 'Image could not be uploaded.');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const saveProfile = async () => {
@@ -91,6 +151,7 @@ export const ProfileScreen = ({ navigation }) => {
         farmName: form.farmName.trim() || null,
         farmLocation: form.farmLocation.trim() || null,
         totalLandAcres: form.totalLandAcres ? Number(form.totalLandAcres) : null,
+        avatarUrl: form.avatarUrl || null,
       };
 
       const { data } = await apiClient.put('/users/me', payload);
@@ -127,7 +188,11 @@ export const ProfileScreen = ({ navigation }) => {
           {/* Header Card */}
           <View style={styles.headerCard}>
             <View style={styles.avatar}>
-              <MaterialIcons name="person" size={32} color="#4FA765" />
+              {profile?.avatarUrl ? (
+                <Image source={{ uri: profile.avatarUrl }} style={styles.avatarImage} />
+              ) : (
+                <MaterialIcons name="person" size={32} color="#4FA765" />
+              )}
             </View>
             <Text style={styles.name}>{profile?.fullName || state?.user?.fullName || 'Farm Manager'}</Text>
             <Text style={styles.role}>{profile?.role || 'Dairy Farm Owner'}</Text>
@@ -200,6 +265,32 @@ export const ProfileScreen = ({ navigation }) => {
             </View>
 
             <ScrollView style={{ padding: 16, maxHeight: 420 }}>
+              <Text style={styles.inputLabel}>Profile Photo</Text>
+              <View style={styles.profileImageRow}>
+                <View style={styles.avatarPreview}>
+                  {form.avatarUrl ? (
+                    <Image source={{ uri: form.avatarUrl }} style={styles.avatarPreviewImage} />
+                  ) : (
+                    <MaterialIcons name="person" size={26} color="#4FA765" />
+                  )}
+                </View>
+
+                <View style={styles.profileImageActions}>
+                  <TouchableOpacity style={styles.imageActionBtn} onPress={pickProfileImage} disabled={uploadingImage}>
+                    <Text style={styles.imageActionText}>{uploadingImage ? 'Uploading...' : 'Upload Photo'}</Text>
+                  </TouchableOpacity>
+
+                  {form.avatarUrl ? (
+                    <TouchableOpacity
+                      style={[styles.imageActionBtn, styles.removeImageBtn]}
+                      onPress={() => setForm((prev) => ({ ...prev, avatarUrl: '' }))}
+                    >
+                      <Text style={[styles.imageActionText, styles.removeImageText]}>Remove</Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </View>
+
               <Text style={styles.inputLabel}>Full Name *</Text>
               <TextInput
                 style={styles.modalInput}
@@ -321,6 +412,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#4FA765',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 32,
   },
   name: { marginTop: 10, fontSize: 18, fontWeight: '900', color: '#101828' },
   role: { marginTop: 2, fontSize: 13, color: '#667085', fontWeight: '600' },
@@ -399,6 +496,55 @@ const styles = StyleSheet.create({
   },
   modalTitle: { color: '#fff', fontWeight: '900', fontSize: 15 },
   inputLabel: { fontSize: 12, color: '#475467', fontWeight: '800', marginTop: 10, marginBottom: 4 },
+  profileImageRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 6,
+    marginBottom: 10,
+  },
+  avatarPreview: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#E9F5EE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#4FA765',
+    overflow: 'hidden',
+  },
+  avatarPreviewImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 35,
+  },
+  profileImageActions: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  imageActionBtn: {
+    backgroundColor: '#E9F5EE',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#A7E0B2',
+  },
+  imageActionText: {
+    color: '#1F6B3A',
+    fontWeight: '800',
+    fontSize: 12,
+  },
+  removeImageBtn: {
+    backgroundColor: '#FEF3F2',
+    borderColor: '#FECACA',
+  },
+  removeImageText: {
+    color: '#D92D20',
+  },
   modalInput: {
     backgroundColor: '#F9FAFB',
     borderWidth: 1,

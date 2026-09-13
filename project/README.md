@@ -92,9 +92,22 @@ DB_NAME=dairy_farm_manager
 DB_PORT=3306
 PORT=5000
 JWT_SECRET=make_this_long_and_random_at_least_32_chars
+
+# Cloudinary image upload configuration
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-### 4) Run backend
+### 4) Install the new Cloudinary dependency
+
+```bash
+npm install
+```
+
+This project now includes `cloudinary` and a `POST /api/uploads` endpoint that accepts an image file, uploads it to Cloudinary, and returns a public image URL.
+
+### 5) Run backend
 
 ```bash
 npm run dev
@@ -143,7 +156,13 @@ Then:
 ### User
 
 - `GET /api/users/me`
-- `PUT /api/users/me`
+- `PUT /api/users/me` with optional fields like `avatarUrl`, `farmName`, `farmLocation`, `totalLandAcres`
+
+### Uploads
+
+- `POST /api/uploads` with `multipart/form-data` field named `image`
+
+The backend uploads the image to Cloudinary and stores the returned public URL in `users.avatar_url`, `animals.photo_url`, or `staff.photo_url`.
 
 ### Livestock
 
