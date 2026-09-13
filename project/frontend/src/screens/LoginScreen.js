@@ -42,7 +42,7 @@ export const LoginScreen = ({ navigation }) => {
     >
       <View style={styles.header}>
         <View style={styles.headerIcon}>
-          <MaterialIcons name="login" size={26} color="#4FA765" />
+          <MaterialIcons name="agriculture" size={26} color="#4FA765" />
         </View>
         <Text style={styles.appTitle}>Dairy Farm Manager</Text>
         <Text style={styles.subtitle}>Manage your farm efficiently</Text>
