@@ -107,7 +107,13 @@ npm install
 
 This project now includes `cloudinary` and a `POST /api/uploads` endpoint that accepts an image file, uploads it to Cloudinary, and returns a public image URL.
 
-### 5) Run backend
+### 5) Cloudinary setup
+
+If you do not already have a Cloudinary account, follow the separate guide here:
+
+- [CLOUDINARY_SETUP.md](CLOUDINARY_SETUP.md)
+
+### 6) Run backend
 
 ```bash
 npm run dev

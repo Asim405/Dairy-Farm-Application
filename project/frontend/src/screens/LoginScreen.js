@@ -84,7 +84,7 @@ export const LoginScreen = ({ navigation }) => {
           onPress={handleLogin}
           disabled={loading}
         >
-          <Text style={styles.primaryButtonText}>{loading ? 'Signing in...' : 'Sign In  →'}</Text>
+          <Text style={styles.primaryButtonText}>{loading ? 'Signing in...' : 'Sign In  '}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
