@@ -1,13 +1,13 @@
 # Render Configuration
-# Save as render.yaml in root directory
+# Save as render.yaml in the project root
 
 services:
   - type: web
     name: mad-backend
     plan: free
     runtime: node
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
     envVars:
       - key: DB_HOST
         value: your_mysql_host
@@ -15,9 +15,11 @@ services:
         value: your_mysql_user
       - key: DB_PASSWORD
         value: your_mysql_password
-        isSecra: true
+        isSecret: true
       - key: DB_NAME
         value: mad_project_db
+      - key: DB_PORT
+        value: 3306
       - key: PORT
         value: 10000
       - key: NODE_ENV

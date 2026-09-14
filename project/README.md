@@ -123,6 +123,132 @@ Backend runs at `http://localhost:5000` and health check at `GET /api/health`.
 
 ---
 
+## Web deployment guide (new database + backend)
+
+If your old database trial has expired, you can move the app to a new MySQL host and deploy the backend on Render.
+
+### 1) Create a new MySQL database
+
+Use a hosting service such as Railway, PlanetScale, or any MySQL provider that gives you:
+
+- host
+- port
+- username
+- password
+- database name
+
+Recommended free option: Railway MySQL.
+
+### 2) Create the database schema
+
+Open the SQL editor in your new database provider and run:
+
+```sql
+CREATE DATABASE dairy_farm_manager;
+USE dairy_farm_manager;
+```
+
+Then import the project files:
+
+- `backend/queries/schema.sql`
+- `backend/queries/seed.sql`
+
+If your provider does not support `SOURCE`, paste the contents of those files directly into the SQL editor.
+
+### 3) Update backend environment variables
+
+Create or update `backend/.env` with the new database details:
+
+```env
+DB_HOST=your_new_mysql_host
+DB_USER=your_mysql_user
+DB_PASSWORD=your_mysql_password
+DB_NAME=dairy_farm_manager
+DB_PORT=3306
+PORT=5000
+NODE_ENV=production
+JWT_SECRET=your_long_random_secret
+
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+CORS_ORIGIN=*
+```
+
+### 4) Deploy backend on Render
+
+This project already includes a Render config in `render.yaml`.
+
+1. Push the project to GitHub
+2. Open Render
+3. Create a new Web Service
+4. Connect your GitHub repository
+5. Render should detect `render.yaml`
+
+The current config uses:
+
+```yaml
+buildCommand: cd backend && npm install
+startCommand: cd backend && npm start
+```
+
+### 5) Add environment variables in Render
+
+In the Render dashboard, add these variables:
+
+```env
+DB_HOST=your_new_mysql_host
+DB_USER=your_mysql_user
+DB_PASSWORD=your_mysql_password
+DB_NAME=dairy_farm_manager
+DB_PORT=3306
+PORT=10000
+NODE_ENV=production
+JWT_SECRET=your_long_random_secret
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+CORS_ORIGIN=*
+```
+
+> `PORT` should be `10000` on Render.
+
+### 6) Test the deployed backend
+
+After deployment, open:
+
+```text
+https://your-render-service-name.onrender.com/api/health
+```
+
+If it returns success, the backend and database are connected correctly.
+
+### 7) Update frontend API URL
+
+Update `frontend/.env` with your new public backend URL:
+
+```env
+EXPO_PUBLIC_API_BASE_URL=https://your-render-service-name.onrender.com/api
+```
+
+Then rebuild the APK or Expo app.
+
+### 8) Rebuild the Android app
+
+After changing the backend URL:
+
+```bash
+cd project/frontend
+npm install
+npx expo start
+```
+
+Or rebuild the APK for distribution.
+
+---
+
 ## Frontend setup (Expo)
 
 ### 1) Install dependencies
