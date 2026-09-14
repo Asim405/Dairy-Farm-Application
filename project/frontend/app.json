@@ -27,7 +27,8 @@
       "package": "com.asimsultan.madproject",
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "usesCleartextTraffic": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
