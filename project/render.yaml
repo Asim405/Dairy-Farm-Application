@@ -1,6 +1,4 @@
 # Render Configuration
-# Save as render.yaml in the project root
-
 services:
   - type: web
     name: mad-backend
@@ -14,29 +12,23 @@ services:
       - key: DB_USER
         value: your_mysql_user
       - key: DB_PASSWORD
-        value: your_mysql_password
-        isSecret: true
+        sync: false
       - key: DB_NAME
         value: mad_project_db
       - key: DB_PORT
-        value: 3306
+        value: '3306'
       - key: PORT
-        value: 10000
+        value: '10000'
       - key: NODE_ENV
         value: production
       - key: JWT_SECRET
-        value: your_jwt_secret_key_here_make_it_long_and_strong
-        isSecret: true
+        sync: false
       - key: CLOUDINARY_CLOUD_NAME
         value: your_cloud_name
       - key: CLOUDINARY_API_KEY
-        value: your_api_key
-        isSecret: true
+        sync: false
       - key: CLOUDINARY_API_SECRET
-        value: your_api_secret
-        isSecret: true
+        sync: false
       - key: CORS_ORIGIN
         value: '*'
     healthCheckPath: /api/health
-    healthCheckTimeout: 30
-    healthCheckInterval: 30
