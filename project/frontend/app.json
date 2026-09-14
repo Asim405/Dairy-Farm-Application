@@ -1,19 +1,21 @@
 {
   "expo": {
     "name": "Dairy Farm Management",
-    "slug": "dairy-farm-management",
+    "slug": "mad-project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/image.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splas2.png",
-      "height": 800,
-      "width": 400,
+      "height": 2000,
+      "width": 2000,
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -23,7 +25,9 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.asimsultan.madproject",
-      "permissions": ["android.permission.RECORD_AUDIO"]
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,6 +45,7 @@
       "eas": {
         "projectId": "595b6064-af78-4152-911b-465ec1529aea"
       }
-    }
+    },
+    "owner": "asimsultan"
   }
 }

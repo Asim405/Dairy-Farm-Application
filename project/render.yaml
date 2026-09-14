@@ -25,6 +25,14 @@ services:
       - key: JWT_SECRET
         value: your_jwt_secret_key_here_make_it_long_and_strong
         isSecret: true
+      - key: CLOUDINARY_CLOUD_NAME
+        value: your_cloud_name
+      - key: CLOUDINARY_API_KEY
+        value: your_api_key
+        isSecret: true
+      - key: CLOUDINARY_API_SECRET
+        value: your_api_secret
+        isSecret: true
       - key: CORS_ORIGIN
         value: '*'
     healthCheckPath: /api/health
