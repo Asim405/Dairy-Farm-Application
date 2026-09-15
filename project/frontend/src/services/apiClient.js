@@ -14,8 +14,8 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // Log request for debugging
-    console.log('API Request:', config.method.toUpperCase(), config.url);
+    // Log the resolved URL because Axios keeps config.url relative.
+    console.log('API Request:', config.method.toUpperCase(), apiClient.getUri(config));
     return config;
   },
   (error) => Promise.reject(error)
@@ -32,6 +32,7 @@ apiClient.interceptors.response.use(
     console.log('API Error:', {
       status: error.response?.status,
       url: error.config?.url,
+      baseURL: error.config?.baseURL,
       message: error.message,
       data: error.response?.data
     });
