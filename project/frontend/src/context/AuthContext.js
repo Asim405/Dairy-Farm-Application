@@ -96,16 +96,31 @@ export const AuthProvider = ({ children }) => {
         return data;
       },
       continueAsGuest: async () => {
-        try {
-          const { data } = await apiClient.post('/auth/guest');
-          await AsyncStorage.setItem('userToken', data.token);
-          await AsyncStorage.setItem('userData', JSON.stringify(data.user));
-          dispatch({ type: 'SIGN_IN', token: data.token, user: data.user });
-          return data;
-        } catch (error) {
-          console.error('Guest session error:', error);
-          throw error;
+        let lastError;
+        let data;
+
+        for (let attempt = 1; attempt <= 2; attempt += 1) {
+          try {
+            const response = await apiClient.post('/auth/guest');
+            data = response.data;
+            break;
+          } catch (error) {
+            lastError = error;
+            const shouldRetry = !error.response && attempt < 2;
+            if (!shouldRetry) break;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
         }
+
+        if (!data) {
+          console.error('Guest session error:', lastError);
+          throw lastError;
+        }
+
+        await AsyncStorage.setItem('userToken', data.token);
+        await AsyncStorage.setItem('userData', JSON.stringify(data.user));
+        dispatch({ type: 'SIGN_IN', token: data.token, user: data.user });
+        return data;
       },
       signOut: async () => {
         await AsyncStorage.removeItem('userToken');

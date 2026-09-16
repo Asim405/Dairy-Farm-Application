@@ -5,5 +5,5 @@
 const configuredUrl = 'https://dairy-farm-application.onrender.com';
 export const API_BASE_URL = configuredUrl.endsWith('/api') ? configuredUrl : `${configuredUrl}/api`;
 
-export const TIMEOUT = 15000; // 15 seconds for free tier spin-up
+export const TIMEOUT = 30000; // Allow the free Render service time to wake up
 
