@@ -92,7 +92,7 @@ export const LoginScreen = ({ navigation }) => {
           onPress={handleGuest}
           disabled={loading}
         >
-          <Text style={styles.secondaryButtonText}>Continue as Guest</Text>
+          <Text style={styles.secondaryButtonText}> {loading ? 'Starting guest session...' : 'Continue as Guest'}</Text>
         </TouchableOpacity>
 
         <Text style={styles.bottomText}>
